@@ -1,0 +1,23 @@
+{
+  "name": "docker-k8s-notebook",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "docsify serve ./docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/y1j2x34/docker-k8s-notebook.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/y1j2x34/docker-k8s-notebook/issues"
+  },
+  "homepage": "https://github.com/y1j2x34/docker-k8s-notebook#readme",
+  "devDependencies": {
+    "docsify-cli": "^4.4.0"
+  }
+}

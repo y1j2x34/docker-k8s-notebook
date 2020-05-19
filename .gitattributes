@@ -1,0 +1,7 @@
+* text=auto
+*.html text
+*.json text
+*.md text
+.gitignore text
+.nojekyll text
+.gitattribute text
