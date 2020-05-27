@@ -7,3 +7,4 @@
   - [数据管理](./getting-started-with-docker/data-management.md)
 
 - [其它](./getting-started-with-docker/more.md)
+- [Docker Hub 镜像加速器](./getting-started-with-docker/docker-registry.md)
