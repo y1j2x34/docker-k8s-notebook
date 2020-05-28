@@ -84,3 +84,51 @@ docker inspect
 
 ## 数据卷容器
 
+### 什么是数据卷容器
+
+命名的容器挂载数据卷，其它容器通过挂载这个容器实现数据共享，挂载数据卷的容器称为：数据卷容器
+
+### 构建一个数据卷容器
+
+```sh
+docker run -it -v ~/host_data:/data --name container_data centos 
+```
+
+### 挂载数据卷容器
+
+```sh
+docker run --volumes-from [contianer name]
+```
+
+创建新的容器，挂载刚才创建的数据卷容器 [container name]
+
+```sh
+docker run -it --name centos_test --volumes-from container_data centos /bin/bash
+```
+
+`docker inspect <container_id>` 命令可以查看挂载细节：
+
+```json
+"Mounts": [{
+    "Type": "bind",
+    "Source": "/home/y1j2x34/container_data",
+    "Destination": "/data",
+    "Mode": "",
+    "RW": true,
+    "Propagation": "rprivate"
+}]
+```
+
+## 数据卷的备份和还原
+
+### 备份方法
+
+```sh
+docker run --volumes-from [container name] -v ${pwd}:/backup centos tar cvf /backup/backup.tar
+```
+
+### 还原方法
+
+```sh
+docker run --volumes-from [container name] -v ${pwd}:/backup centos tar xvf /backup/backup.tar
+```
