@@ -69,7 +69,7 @@ docker run -it --name mynginx-test mynginx2
 
 ```sh
 [root@b9d0bcce8330 /]# ls
-bin  data  dev	etc  home  lib	lib64  lost+found  media  mnt  opt  proc  root	run  sbin  srv	sys  tmp  usr  var
+bin  data  dev etc  home  lib lib64  lost+found  media  mnt  opt  proc  root run  sbin  srv sys  tmp  usr  var
 [root@b9d0bcce8330 /]# cd data
 [root@b9d0bcce8330 data]# ls
 volume1 volume2
@@ -91,7 +91,7 @@ docker inspect
 ### 构建一个数据卷容器
 
 ```sh
-docker run -it -v ~/host_data:/data --name container_data centos 
+docker run -it -v ~/host_data:/data --name container_data centos
 ```
 
 ### 挂载数据卷容器
