@@ -190,3 +190,173 @@
     ```
 
 ## 使用 Dockerfile 构建
+
+### 常用指令
+
+|类型|命令|
+|--|--|
+|基础镜像|FROM|
+|维护者信息|MAINTAINER|
+|镜像操作指令|RUN,COPY,ADD,EXPOSE,WORKDIR,ONBUILD,USER,VOLUMN...|
+|容器启动时执行指令|CMD,ENTRYPOINT|
+
+1. FROM: 指定基础镜像
+
+    构建镜像可以理解为基于一个基础镜像进行修改。因此一个Dockerfile中FROM是必须要配置的指令，并且必须是第一条指令。如：指定ubuntu的18版本为基础镜像
+
+    ```dockerfile
+    FROM ubunt:18
+    ```
+
+1. RUN: 执行命令
+
+    RUN指令在新镜像内部执行的命令，如：执行某些动作、安装系统软件、配置系统信息等等，格式有如下两种：
+
+    - shell格式：`RUN < command >`, 就像直接在命令行中输入命令一样，如
+
+        ```dockerfile
+        RUN echo "hello" > /etc/nginx/html/index.html
+        ```
+
+    - exec格式：`RUN ["可执行文件","参数1","参数2"]`，如在镜像中用yum安装nginx:
+
+        ```dockerfile
+        RUN ["yum", "install", "nginx"]
+        ```
+
+    **注意：** 多行命令不要写多个 `RUN`，因为dockerfile中每一条指令都会建立一层镜像层，容易造成镜像臃肿、多层，增加构建部署时间，也容易出错， `RUN` 书写的换行符是 `\`.
+
+1. COPY 复制文件
+
+    将宿主机器上的文件复制到镜像内，如果目的位置不存在，Docker会自动创建。但宿主机要复制的目录必须和Dockerfile文件同级目录下。
+    格式：
+
+    ```dockerfile
+    COPY [--chown=<user>:<group>] <愿路径>...<目标路径>
+    COPY [--chown=<user>:<group>] ["<愿路径>",..."<目标路径>"]
+    ```
+
+1. CMD: 容器启动时执行的命令
+
+    CMD在Dockerfile中只能出现一次，多次的话，只有最后一个有效。它的作用就是在启动容器时提供一个默认命令项。如果用户执行`docker run`时提供了命令项，就会覆盖这个命令。
+
+    格式：
+
+    shell 格式：
+
+    ```dockerfile
+    CMD <命令>
+    ```
+
+    exec 格式：
+
+    ```dockerfile
+    CMD ["可执行文件", "参数1", "参数2"...]
+    ```
+
+1. MAINTAINER: 指定作者
+
+    ```dockerfile
+    MAINTAINER <name> <email>
+    ```
+
+1. EXPOSE: 暴露端口
+
+    设置容器对外映射的端口号，相当于指定 `docker run -p` 的-p参数
+
+    ```dockerfile
+    EXPOSE <端口1> [<端口2>...]
+    ```
+
+1. WORKDIR: 配置工作目录
+
+    为RUN、CMD、ENTRYPOINT指令配置工作目录，类似于 cd 命令，但是WORKDIR 会自动创建不存在的目录
+
+    ```dockerfile
+    WORKDIR <path>
+    ```
+
+1. ENTRYPOINT: 容器启动执行命令
+
+    用法和 CMD 一样，但有不同点：
+    1. CMD的命令会被docker run的命令覆盖，而ENTRYPOINT不会
+    2. CMD和ENTRYPOINT都存在时，CMD指令变成了ENRTYPOINT的参数，并且此CMD提供的参数会被docker run后面的命令覆盖
+
+1. VOLUME
+
+    创建一个从主机或其它容器挂载的挂载点
+
+    ```dockerfile
+    VOLUME ["path"]
+    ```
+
+1. USER
+
+    指定当前往下执行的用户
+
+1. ADD
+
+    同COPY
+
+1. ONBUILD
+
+    配置当前所创建的镜像作为其它新创建镜像的基础镜像时所执行的操作指令。
+
+    ```dockerfile
+    ONBUILD [INSTRUCTION]
+    ```
+
+1. ENV
+
+    设置环境变量，变量以 `key=value` 的形式存在，在容器内被脚本或者程序调用，容器运行的时候这个变量也会保留
+
+    ```dockerfile
+    # 一个
+    ENV <key> <value>
+    # 多个
+    ENV <key>=<value> <key2>=<value2>
+    ```
+
+    注意：
+
+    1. 具有传染性，当前镜像被当作其它镜像的基础镜像时，新镜像会拥有这个基础镜像所有环境变量
+    2. ENV定义的环境变量可以在dockerfile被后面的所有指令中使用，但不能被docker run的命令参数引用。
+
+### Dockerfile 编写
+
+基于centos构建一个nginx镜像
+
+```dockerfile
+FROM centos
+MAINTAINER vgerbot vgerbot@gmail.com
+# 测试网络环境
+RUN ping -c 1 www.baidu.com
+RUN yum -y install gcc make pcre-devel zlib-devel tar zlib
+ADD nginx-1.15.8.tar.zg /usr/src/
+RUN cd /usr/src/nginx-15.8 \
+    && mkdir /usr/local/nginx \
+    && ./configure --prefix=/usr/local/nginx && make && make install \
+    && ln -s /usr/local/nginx/sbin/nginx /usr/local/sbin/ \
+    && nginx
+
+RUN rm -rf /usr/src/nginx-nginx-1.15.8
+EXPOSE 80
+CMD ['nginx', '-g', 'daemon off;']
+```
+
+运行 `docker build` 构建
+
+```sh
+docker build [OPTIONS] PATH | URL | -
+```
+
+OPTIONS有如下几个常用的：
+
+```md
+* --build-arg=[]: 设置镜像创建时的变量
+* -f: 指定要使用的Dockerfile路径
+* --force-rm: 设置镜像过程中删除中间容器
+* --rm: 设置镜像成功后删除中间容器
+* --tag,-t:镜像的名字以及标签，通常 name:tag 或者 name 格式; 
+```
+
