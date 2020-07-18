@@ -6,6 +6,7 @@
   - [进入容器和网络访问](./getting-started-with-docker/container-network.md)
   - [数据管理](./getting-started-with-docker/data-management.md)
   - [构建镜像](./getting-started-with-docker/create-docker-image.md)
+  - [资源隔离和限制](./getting-started-with-docker/isolate-containers.md)
 
 - [其它](./getting-started-with-docker/more.md)
 - [Docker Hub 镜像加速器](./getting-started-with-docker/docker-registry.md)
